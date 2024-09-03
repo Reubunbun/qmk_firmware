@@ -16,6 +16,11 @@
 
 #pragma once
 
+#define WS2812_DI_PIN D7
+#define RGBLIGHT_DRIVER_WS2812
+#define RGB_MATRIX_TYPING_HEATMAP_DECREASE_DELAY_MS 72
+#define RGB_MATRIX_TYPING_HEATMAP_INCREASE_STEP 50
+
 #ifdef RGB_MATRIX_ENABLE
 /* RGB Matrix driver configuration */
 #    define DRIVER_COUNT 2
