@@ -132,7 +132,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (
         keycode == KC_CAPS &&
         record->event.pressed &&
-        !host_keyboard_led_state().caps_lock
+        host_keyboard_led_state().caps_lock
     ) {
         if (ditto_colour_index == (NUM_DITTO_COLOURS - 1)) {
             ditto_colour_index = 0;
