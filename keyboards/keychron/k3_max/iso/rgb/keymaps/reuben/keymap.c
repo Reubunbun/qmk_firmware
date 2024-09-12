@@ -17,6 +17,29 @@
 #include QMK_KEYBOARD_H
 #include "keychron_common.h"
 
+#define ESC_KEY 0
+#define F1_KEY 1
+#define BACKTICK_KEY 16
+#define ONE_KEY 17
+#define NUM_DITTO_COLOURS 13
+
+const uint8_t ditto_colour_cycle[][3] = {
+    {RGB_SPRINGGREEN},
+    {RGB_CYAN},
+    {RGB_CHARTREUSE},
+    {RGB_GOLDENROD},
+    {RGB_PURPLE},
+    {RGB_GREEN},
+    {RGB_MAGENTA},
+    {RGB_BLUE},
+    {RGB_WHITE},
+    {RGB_TEAL},
+    {RGB_GOLD},
+    {RGB_TURQUOISE},
+    {RGB_YELLOW},
+};
+static uint8_t ditto_colour_index = 0;
+
 // Quotation marks instead of "@" because thats where "@" is on ANSI layout, and SEND_STRING will use ANSI keycodes
 static const char *email_addresses[] = {
     "reuben.luke.p\"gmail.com",
@@ -106,16 +129,37 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     email_cycling = false;
     current_email = 0;
 
+    if (
+        keycode == KC_CAPS &&
+        record->event.pressed &&
+        !host_keyboard_led_state().caps_lock
+    ) {
+        if (ditto_colour_index == (NUM_DITTO_COLOURS - 1)) {
+            ditto_colour_index = 0;
+        } else {
+            ditto_colour_index++;
+        }
+    }
+
     return true;
 }
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     if (host_keyboard_led_state().caps_lock) {
-        for (uint8_t i = led_min; i < led_max; i++) {
-            if (g_led_config.flags[i] & LED_FLAG_KEYLIGHT) {
-                rgb_matrix_set_color(i, RGB_RED);
-            }
-        }
+        rgb_matrix_set_color(ESC_KEY, RGB_RED);
+        rgb_matrix_set_color(F1_KEY, RGB_RED);
+        rgb_matrix_set_color(BACKTICK_KEY, RGB_RED);
+        rgb_matrix_set_color(ONE_KEY, RGB_RED);
+    } else {
+        uint8_t r = ditto_colour_cycle[ditto_colour_index][0];
+        uint8_t g = ditto_colour_cycle[ditto_colour_index][1];
+        uint8_t b = ditto_colour_cycle[ditto_colour_index][2];
+
+        rgb_matrix_set_color(ESC_KEY, r, g, b);
+        rgb_matrix_set_color(F1_KEY, r, g, b);
+        rgb_matrix_set_color(BACKTICK_KEY, r, g, b);
+        rgb_matrix_set_color(ONE_KEY, r, g, b);
     }
+
     return false;
 }
